@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bms-seat-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: bms-seat
+  template:
+    metadata:
+      labels:
+        app: bms-seat
+    spec:
+      containers:
+      - name: bmsseatserver
+        image: anujbd11/bms-seat:latest
+        # livenessProbe:
+        #   tcpSocket:
+        #     port: 8080
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+            httpHeaders: 
+            - name: Custom-Header
+              value: Awesome
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+
+        ports:
+        - containerPort: 3000

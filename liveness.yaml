@@ -1,0 +1,43 @@
+# This one is default and is working perfectly fine
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   labels:
+#     test: liveness
+#   name: liveness-exec
+# spec:
+#   containers:
+#   - name: liveness
+#     image: anujbd11/bms-seat:latest
+#     args:
+#     - /bin/sh
+#     - -c
+#     - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 1200
+#     livenessProbe:
+#       exec:
+#         command:
+#         - cat
+#         - /tmp/healthy
+#       initialDelaySeconds: 5
+#       periodSeconds: 5
+
+# This one is using http
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: liveness-http
+spec:
+  containers:
+  - name: liveness
+    image: anujbd11/bms-seat:latest
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 3000
+        httpHeaders: 
+        - name: Custom-Header
+          value: Awesome
+      initialDelaySeconds: 5
+      periodSeconds: 5
